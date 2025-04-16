@@ -1,0 +1,61 @@
+tasks:
+  research_credit_debit_cards_task:
+    description: >
+      Look for information about VISA and Mastercard credit card rates and fees on these websites: 
+      - https://pa.scotiabank.com/es/banca-personal/tasas-y-tarifarios/tarifario-de-tarjetas-de-crdito.html 
+      - https://www.bgeneral.com/tasas-comisiones-recargos/#tarjetasdecreditobancogeneral
+      Banistmo, 
+      BAC Credomatic, 
+      Global Bank.
+      Identify and summarize the most relevant information about card fees, any associated interest, transaction limits, and any benefits or features.      
+    expected_output: >
+      For each bank, generate a comprehensive data report including:
+      - Bank name, product name.
+      - Fees for credit cards
+      - Interest rates (APR) for credit cards
+      - Rewards programs for credit cards
+      - Any other relevant terms and conditions for both credit and debit cards
+
+
+  analyze_credit_cards_task:
+    description: >
+      Analyze the collected credit card data from all banks.
+      Compare the different credit cards based on key parameters like:
+      - Annual Fees
+      - APR (Annual Percentage Rate) ranges
+      - Transaction Fees (if any)
+      - Rewards programs (cashback, points, miles - if quantifiable)
+      - Any other significant fees or benefits.
+      Create a comparative table or structured summary highlighting the key differences between credit card offerings from different banks.
+      Use pandas DataFrame to organize and analyze the data if helpful.
+    agent: analyst_agent
+    context:
+      - research_credit_cards_task
+
+  analyze_debit_cards_task:
+    description: >
+      Analyze the collected debit card data from all banks.
+      Compare the different debit cards based on:
+      - Monthly or Annual Fees (if any)
+      - Transaction Fees (ATM withdrawal, POS, etc.)
+      - Transaction Limits
+      - Any benefits or features (e.g., international usage, purchase protection - if any).
+      Create a comparative table or structured summary for debit cards, similar to the credit card analysis."""
+    agent: analyst_agent
+    context:
+      - research_debit_cards_task
+
+  generate_report_task:
+    description: >
+      Generate a comprehensive report comparing credit and debit card options from Panamanian banks.
+      The report should include:
+      - An introduction explaining the purpose of the comparison.
+      - A section comparing credit cards, highlighting key fees, interest rates, and benefits in a clear table or structured format.
+      - A section comparing debit cards, similarly highlighting fees, transaction limits, and benefits.
+      - A summary of the key findings and overall comparison.
+      - A disclaimer stating that this information is based on publicly available data and users should verify details directly with the banks.
+      Format the report for easy readability and understanding by someone choosing a credit or debit card in Panama.
+    agent: report_writer_agent
+    context:
+      - analyze_credit_cards_task
+      - analyze_debit_cards_task
