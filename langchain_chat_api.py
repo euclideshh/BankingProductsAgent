@@ -107,7 +107,7 @@ async def create_session(request: SessionRequest):
         logger.info("Initializing ChatOllama model...")
         # Initialize the ChatOllama model
         try:
-            llm = ChatOllama(model="gemma3:1b")
+            llm = ChatOllama(model="gemma3:1b",temperature=0)
         except Exception as e:
             logger.error(f"Failed to initialize LLM: {str(e)}")
             logger.error(traceback.format_exc())
@@ -125,14 +125,13 @@ async def create_session(request: SessionRequest):
         
         logger.info("Creating prompt template...")
         # Create custom prompt template for the Panamanian Banking Expert
-        prompt_template = """Eres un experto en productos bancarios panameños y tarifas de servicios bancarios.        
+        # --- Historial de conversación: {chat_history}
+        prompt_template = """Eres un experto en productos y tarifas de servicios bancarios de Panamá.        
         Debes responder siempre en español. Utiliza la siguiente información de contexto para responder a la pregunta del usuario.        
-        Si no conoces la respuesta, simplemente indica que no tienes esa información, no inventes respuestas.        
+        Si no conoces la respuesta, simplemente indica que no tienes esa información, no inventes respuestas. No menciones bancos de otros paises que no sea de Panamá.        
         Mantén tus respuestas concisas, precisas y profesionales.
         
-        Contexto: {context}
-        
-        Historial de conversación: {chat_history}
+        Contexto: {context}        
         
         Pregunta: {question}
         
@@ -140,7 +139,8 @@ async def create_session(request: SessionRequest):
         
         qa_prompt = PromptTemplate(
             template=prompt_template, 
-            input_variables=["context", "chat_history", "question"]
+            #input_variables=["context", "chat_history", "question"]
+            input_variables=["context", "question"]
         )
         
         logger.info("Creating ConversationalRetrievalChain...")
